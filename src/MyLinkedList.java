@@ -12,7 +12,7 @@ public class MyLinkedList<L> {
     }
 
     Node<L> node(int index) {
-        if (index < (size << 1)) {
+        if (index/2 < size) {
             Node<L> x = first;
             for (int i = 0; i < index; i++)
                 x = x.next;

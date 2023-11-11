@@ -4,6 +4,8 @@ public class MyHashMap<K, V> {
 
     private Node<K, V>[] buckets;
 
+    private int size;
+
     public MyHashMap() {
         this.buckets = new Node[10];
     }
@@ -19,13 +21,16 @@ public class MyHashMap<K, V> {
         Node<K, V> kvEntry = new Node<>();
         kvEntry.setKey(key);
         kvEntry.setValue(value);
-
-        if(buckets[bucketNumber] == null) {
+        Node<K, V> currentEntry = buckets[bucketNumber];
+        if(currentEntry == null){
             buckets[bucketNumber] = kvEntry;
-        } else{
-            kvEntry.setKvNextElement(buckets[bucketNumber]);
-            buckets[bucketNumber] = kvEntry;
+        }else {
+            while(currentEntry.getKvNextElement() != null){
+                currentEntry = currentEntry.getKvNextElement();
+            }
+            currentEntry.setKvNextElement(kvEntry);
         }
+        size++;
     }
 
     public V get (K key){
@@ -47,15 +52,27 @@ public class MyHashMap<K, V> {
     public Node<K, V> remove(K key){
         int hash = key.hashCode();
         int bucketNumber = hash % buckets.length;
+        if(buckets[bucketNumber] == null){return null;}
+        Node<K, V> prev = null;
         Node<K, V> currentEntry = buckets[bucketNumber];
-        if(hash == currentEntry.key.hashCode() && currentEntry.key.equals(key)){
-            currentEntry = null;
-        }
-        return currentEntry;
+        Node<K, V> next = currentEntry.getKvNextElement();
+        do{
+            if(currentEntry.getKey().equals(key)){
+                if(prev == null) {
+                    buckets[bucketNumber] = next;
+                }else {prev.setKvNextElement(next);}
+                size--;
+                return currentEntry;
+            }
+            prev = currentEntry;
+            currentEntry = next;
+            next = currentEntry.getKvNextElement();
+        }while(currentEntry.getKvNextElement() != null);
+        return null;
     }
 
     public int size(){
-        return buckets.length;
+        return size;
     }
 
     private V checkEquals(Node<K,V> e, K key){
@@ -65,7 +82,7 @@ public class MyHashMap<K, V> {
         return null;
     }
 
-    private class Node<K, V>{
+    private static class Node<K, V>{
         private K key;
 
         private V value;
