@@ -26,17 +26,23 @@ public class MyArrayList<A> {
     }
 
     public A get(int index){
-        return (A) arr[index];
+        if(index > 0 && index < arr.length) {
+            return (A) arr[index];
+        }
+        return null;
     }
 
     public A remove(int index){
-        Object[] newarr = Arrays.copyOf(arr,arr.length-1);
-        System.out.println(newarr.length);
-        for(int i = index; i < arr.length; i++){
-            newarr[i-1] = arr[i];
-        }
-        arr = Arrays.copyOf(newarr, newarr.length);
-        return (A) arr;
+        try {
+            Object[] newarr = Arrays.copyOf(arr, arr.length - 1);
+            for (int i = index+1; i < arr.length; i++) {
+                newarr[i - 1] = arr[i];
+            }
+            arr = Arrays.copyOf(newarr, newarr.length);
+            return (A) arr;
+        }catch (IndexOutOfBoundsException e){
+            System.out.println("Please enter correct index!");}
+        return null;
     }
 
     public int size(){
